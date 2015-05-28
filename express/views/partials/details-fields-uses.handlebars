@@ -1,1 +1,9 @@
-{{#if user}}{{>details-fields-uses-write}}{{else}}{{>details-fields-uses-read}}{{/if}}
+<div class="row uses-container">
+    <div class="column small-12">
+        <div class="details-heading">Uses</div>
+        {{#if user}}{{>details-fields-uses-write}}{{else}}{{>details-fields-uses-read}}{{/if}}
+    </div>
+</div>
+
+
+

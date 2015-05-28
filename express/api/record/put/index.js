@@ -1,7 +1,7 @@
 "use strict";
 
-module.exports = function(config) {
-    var fluid = require('infusion');
+module.exports = function (config) {
+    var fluid = require("infusion");
 
     var namespace = "gpii.ctr.record.put";
 
@@ -9,10 +9,9 @@ module.exports = function(config) {
     record.error        = require("../../lib/error")(config);
     record.schemaHelper = require("../../../schema/lib/schema-helper")(config);
 
-    var request         = require('request');
     var filters         = require("secure-filters");
 
-    record.parseAndValidateInput = function() {
+    record.parseAndValidateInput = function () {
         if (!record.req.params || !record.req.params.uniqueId) {
             throw record.constructError(400, "You must provide the required query parameters to use this interface.");
         }
@@ -22,18 +21,18 @@ module.exports = function(config) {
         }
     };
 
-    var express = require('express');
+    var express = require("express");
 
     var router = express.Router();
-    var bodyParser = require('body-parser');
+    var bodyParser = require("body-parser");
     router.use(bodyParser.urlencoded());
     router.use(bodyParser.json());
 
-    var handlePut = function(req, res){
+    var handlePut = function (req, res) {
         // TODO:  Add support for commenting on a particular version as well as adding a comment while saving a change.
 
         if (!req.session || !req.session.user) {
-            return res.status(401).send(JSON.stringify({ok:false, message: "You must be logged in to use this function."}));
+            return res.status(401).send(JSON.stringify({ok: false, message: "You must be logged in to use this function."}));
         }
 
         // Make sure the current record has at least a uniqueId
@@ -42,9 +41,9 @@ module.exports = function(config) {
         }
 
         // Get the current document
-        var readRequest = require('request');
+        var readRequest = require("request");
         var sanitizedId = filters.js(req.body.uniqueId);
-        readRequest.get(config['couch.url'] + "/_design/api/_view/entries?key=%22" + sanitizedId + "%22", function(readError,readResponse,readBody) {
+        readRequest.get(config["couch.url"] + "/_design/api/_view/entries?key=%22" + sanitizedId + "%22", function (readError, readResponse, readBody) {
             if (readError) {
                 console.log(readError);
                 return res.status(500).send({"ok": false, "message": "There was an error retrieving the record with uniqueId '" + sanitizedId + "'..."});
@@ -55,7 +54,7 @@ module.exports = function(config) {
             // If we are trying to add a record that does not already exist, use a POST to upload to CouchDB
             if (!jsonData.rows || jsonData.rows.length === 0) {
                 var postHelper = require("../post/post-helper")(config);
-                return postHelper(req,res);
+                return postHelper(req, res);
             }
 
             var originalRecord = jsonData.rows[0].value;
@@ -65,7 +64,7 @@ module.exports = function(config) {
             var allowedFields = ["type", "permanency", "namespace", "uniqueId", "notes", "status", "termLabel", "valueSpace", "defaultValue", "source", "aliasOf", "translationOf", "definition", "uses", "applicationUniqueFlag"];
 
             // Overlay the supplied data onto this record, deleting any fields that are null, zero-length, undefined, or which only consist of whitespace
-            allowedFields.forEach(function(field){
+            allowedFields.forEach(function (field) {
                 if (req.body[field] !== undefined) {
                     if (!req.body[field] || (req.body[field].trim && (req.body[field].trim() === "")) || req.body[field].length === 0) {
                         delete newRecord[field];
@@ -91,30 +90,30 @@ module.exports = function(config) {
             }
 
             // Upload the combined record to CouchDB
-            var writeRequest = require('request');
+            var writeRequest = require("request");
             var writeOptions = {
-                url: config['couch.url'] + "/" + newRecord._id,
+                url: config["couch.url"] + "/" + newRecord._id,
                 body: JSON.stringify(newRecord)
             };
 
-            writeRequest.put(writeOptions, function(writeError, writeResponse, writeBody){
+            writeRequest.put(writeOptions, function (writeError, writeResponse, writeBody) {
                 if (writeError) {
                     console.log(writeError);
                     return res.status(500).send({"ok": false, "message": "There was an error writing the record with uniqueId '" + req.body.uniqueId + "'..."});
                 }
 
                 if (writeResponse.statusCode === 201) {
-                    res.status(200).send({"ok":true,"message": "Record updated.", "record": newRecord});
+                    res.status(200).send({ok: true, message: "Record updated.", record: newRecord});
                 }
                 else {
                     var jsonData = JSON.parse(writeBody);
-                    res.status(writeResponse.statusCode).send({"ok": false, "message": "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
+                    res.status(writeResponse.statusCode).send({ok: false, message: "There were one or more problems that prevented your update from taking place.", "errors": jsonData.reason.errors });
                 }
             });
         });
     };
 
-    router.put('/', handlePut);
+    router.put("/", handlePut);
 
     return router;
 };

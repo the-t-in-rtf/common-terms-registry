@@ -30,13 +30,13 @@ module.exports = function (config) {
     router.get("/", noid.getRouter());
 
     var put = require("./put")(config);
-    router.use("/", put);
+    router.put("/", put);
 
     var post = require("./post")(config);
-    router.use("/", post);
+    router.post("/", post);
 
     var del = require("./delete")(config);
-    router.use("/", del);
+    router.delete("/", del);
 
     return router;
 };
