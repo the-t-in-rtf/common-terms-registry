@@ -186,8 +186,6 @@
         });
     };
 
-    // TODO:  Wire up comment controls
-
     fluid.defaults("ctr.components.details", {
         baseUrl: "/api/record",
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
@@ -271,8 +269,8 @@
                 elementType: "text"
             },
             {
-                selector:    "comment",
-                path:        "comment",
+                selector:    "notes",
+                path:        "notes",
                 elementType: "text"
             }
         ],
@@ -293,7 +291,7 @@
             "termLabel":     "input[name='termLabel']",
             "valueSpace":    "input[name='valueSpace']",
             "defaultValue":  "input[name='defaultValue']",
-            "comment":       "input[name='comment']"
+            "notes":         "input[name='notes']"
         },
         events: {
             "refresh":      "preventable",
