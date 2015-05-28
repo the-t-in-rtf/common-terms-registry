@@ -1,17 +1,10 @@
-<div class="row">
-    <div class="column small-12">
-        <div class="details-heading">Uses</div>
-        <div class="uses-container">
-            <input type="hidden" name="uses" value="{{record.uses}}"/>
-            <ul>
-                {{#if record.uses}}
-                    {{#each record.uses}}
-                        <li>{{.}} <span class="ptd-icon- remove-use" position="{{@index}}">delete</span></li>
-                    {{/each}}
-                {{/if}}
-                <li class="add"><input type="text" name="addUse" placeholder="Add use"></li>
-            </ul>
-        </div>
-    </div>
-</div>
+<input type="hidden" name="uses" value="{{record.uses}}"/>
+<ul>
+    {{#if record.uses}}
+        {{#each record.uses}}
+            <li>{{.}} <span class="ptd-icon- remove-use" position="{{@index}}">delete</span></li>
+        {{/each}}
+    {{/if}}
+    <li class="add"><input type="text" name="addUse" placeholder="Add use"></li>
+</ul>
 
