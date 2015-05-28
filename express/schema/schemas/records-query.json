@@ -1,12 +1,15 @@
 {
     "type":        "object",
     "id":          "records-query",
-    "title":       "Record query schema",
+    "title":       "Records query schema",
     "description": "A schema used to validate incoming record browsing query parameters in JSON format.",
 
     "definitions": {
         "sort": {
-            "type": "string"
+            "oneOf": [
+                { "type": "string" },
+                { "type": "array"}
+            ]
         },
         "offset": {
             "type": "number"

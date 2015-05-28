@@ -1,0 +1,34 @@
+{
+    "type":        "object",
+    "id":          "suggest-query",
+    "title":       "Query schema for auto-suggest",
+    "description": "A schema used to validate incoming auto-suggest query parameters in JSON format.",
+
+    "definitions": {
+        "q": {
+            "type": "string"
+        }
+    },
+
+    "properties": {
+        "sort": {
+            "$ref": "records-query#/definitions/sort"
+        },
+        "children": {
+            "$ref": "records-query#/definitions/children"
+        },
+        "updated": {
+            "$ref": "records-query#/definitions/updated"
+        },
+        "status": {
+            "$ref": "records-query#/definitions/status"
+        },
+        "recordType": {
+            "$ref": "records-query#/definitions/recordType"
+        },
+        "q": {
+            "$ref": "search-query#/definitions/q"
+        }
+    },
+    "required": [ "q" ]
+}

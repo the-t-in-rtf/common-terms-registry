@@ -246,16 +246,11 @@
         if (that.model.records && that.model.records.length > 0) {
             viewport.html("");
 
-            var isSearch = Boolean(that.model.searchSettings.query);
-
             var pageSize = that.model.searchSettings.limit === -1 ? that.model.count : that.model.searchSettings.limit;
             if (that.model.count < pageSize) { pageSize = that.model.count; }
             var limit = limit !== -1 ? limit: that.model.records.length;
 
-            // Searches return all records and we page through them silently internally
-            //
-            // Browsing hits the "terms" interface and uses paging to keep the speed reasonable
-            var pageData = isSearch ? that.model.records.slice(that.model.searchSettings.offset, limit) : that.model.records;
+            var pageData = that.model.records;
 
             templates.append(viewport, "search-records", {records: pageData, user: that.model.user, pageSize: pageSize });
             templates.append(viewport, "search-navigation-footer",{});
@@ -292,16 +287,16 @@
         }
     };
 
-    // Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
-    search.refreshOrPageInternally = function(that) {
-        var isSearch = Boolean(that.model.searchSettings.query);
-        if (isSearch) {
-            that.displayCurrentPage();
-        }
-        else {
-            that.searchSettingsChanged();
-        }
-    };
+    //// Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
+    //search.refreshOrPageInternally = function(that) {
+    //    var isSearch = Boolean(that.model.searchSettings.query);
+    //    if (isSearch) {
+    //        that.displayCurrentPage();
+    //    }
+    //    else {
+    //        that.searchSettingsChanged();
+    //    }
+    //};
 
     // We have to do this because templates need to be loaded before we initialize our own code.
     search.init = function(that) {
@@ -483,7 +478,7 @@
                     args: ["{that}"]
                 },
                 {
-                    funcName: "ctr.components.search.refreshOrPageInternally",
+                    funcName: "ctr.components.search.searchSettingsChanged",
                     excludeSource: "init",
                     args: ["{that}"]
                 },

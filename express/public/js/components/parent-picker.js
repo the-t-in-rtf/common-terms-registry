@@ -36,7 +36,7 @@
             statusString += ["active","draft","unreviewed","candidate"].join("&status=");
 
             var options = {
-                url:     that.options.baseUrl + "/api/suggest?q=" + queryElement.val() + statusString,
+                url:     that.options.baseUrl + "/api/search?limit=5&q=" + queryElement.val() + statusString,
                 success: that.displaySuggestions,
                 error:   that.displayError
             };

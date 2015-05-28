@@ -6,11 +6,11 @@ fluid.setLogging(true);
 var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.tests.childrenTests");
 
-require("../../lib/children");
+require("gpii-express");
+require("gpii-pouch");
 require("../../../node_modules/kettle");
 require("../../../node_modules/kettle/lib/test/KettleTestUtils");
-require("../../../node_modules/gpii-express");
-require("../../../node_modules/gpii-pouch");
+require("../../lib/children");
 require("./children-caseholder");
 
 var path = require("path");

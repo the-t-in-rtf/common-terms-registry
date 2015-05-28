@@ -1,3 +1,4 @@
+// TODO:  These tests will not work until they are refactored to use the new helper library at a minimum.
 // tests for all write methods
 "use strict";
 var fluid = require("infusion");

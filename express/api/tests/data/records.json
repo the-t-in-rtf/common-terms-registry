@@ -22,7 +22,7 @@
         "map": "function(doc) {\n    if (doc) {\n        var key = doc.uniqueId;\n        var type = 0;\n\n        // Don't include operators in the combined view for now.\n        if (doc.type === \"condition\") { return; }\n        else if (doc.type === \"alias\" || doc.type === \"transform\") { key = doc.aliasOf; type = 1; }\n        else if (doc.type === \"translation\") { key = doc.translationOf; type = 1; }\n\n        emit([key, type], doc);\n    }\n}"
       },
       "terms": {
-        "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() == 'term' && doc.status !== \"deleted\") {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"
+        "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && doc.type.toLowerCase() == 'term' ) {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"
       },
       "transforms": {
         "map": "function(doc) {\n    if (doc) {\n        if (doc && doc.type && (doc.type.toLowerCase() === 'transform')) {\n            emit(doc.uniqueId, doc);\n        }\n    }\n}"

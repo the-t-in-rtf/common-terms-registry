@@ -9,7 +9,7 @@ var options = {
 };
 
 var timestamp = (new Date()).getTime();
-var output = "/tmp/extract-" + timestamp + ".json";
+var output = "/tmp/children-" + timestamp + ".json";
 
 // Add records you want to test here (and to the test case holder for child tests).
 var filterToUids = [

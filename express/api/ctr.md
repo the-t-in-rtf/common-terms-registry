@@ -428,10 +428,12 @@ Performs a full text search of all data, returns matching terms.  Only standard 
         {
             "ok": true,
             "total_rows": 1,
-            "offset": 0,
-            "limit": 1,
-            "q": "soundActive",
-            "sort": "uniqueId ASC",
+            "params": {
+                "offset": 0,
+                "limit": 1,
+                "q": "soundActive",
+                "sort": "uniqueId ASC"
+            },
             "records": [
                 {
                     "type": "term",
@@ -453,48 +455,6 @@ Performs a full text search of all data, returns matching terms.  Only standard 
                     ],
                     "updated": "2014-05-25T11:23:32.441Z"
                 }
-            ],
-            "retrievedAt": "2014-05-25T11:23:32.441Z"
-        }
-        ```
-
-## GET /api/suggest/{?q,status,sort,versions}
-Suggest the correct common term to use.  Performs a search as in /api/search, but only returns 5 results and does not support paging.  Equivalent to `/api/search?q=search&results=5`.
-
-+ Parameters
-    + q (required, string) ... The query string to match.  Can either consist of a word or phrase as plain text, or can use [lucene's query syntax][1] to construct more complex searches.
-    + status (optional, string) ... The record statuses to return (defaults to everything but 'deleted' records).  Can be repeated to include multiple statuses.
-    + sort (optional,string) ... The sort order to use when displaying records.  Conforms to [lucene's query syntax][1].
-    + versions (optional, boolean) ... Whether or not to display the full version history for each record (including any unpublished drafts).  Defaults to "false".
-
-+ Response 200 (application/search+json)
-    + Headers
-        + Content-Type: application/record+json; profile=https://terms.raisingthefloor.org/schema/search.json#
-        + Link: <https://terms.raisingthefloor.org/schema/search.json#>; rel="describedBy"
-    + Body
-
-        ```
-        {
-            "ok": true,
-            "total_rows": 1,
-            "params": {
-                "offset": 0,
-                "limit": 100,
-                "updated": "2014-05-25T11:23:32.441Z",
-                "statuses": [ "unreviewed" ],
-                "types": [ "alias" ]
-            },
-            "records": [
-                     {
-                        "type": "alias",
-                        "uniqueId": "org.gnome.settings-daemon.plugins.sound.active",
-                        "aliasOf": "soundActive",
-                        "notes": "The original alias record contained the following additional information:\r\n\r\ndefaultValue:TRUE\r\nuserPreference:org.gnome.settings-daemon.plugins.sound.active\r\nvalueSpace:Boolean\r\nid:662\r\n",
-                        "termLabel": "org.gnome.settings-daemon.plugins.sound.active",
-                        "status": "active",
-                        "source": "gnome",
-                        "updated": "2014-05-25T11:23:32.441Z"
-                    }
             ],
             "retrievedAt": "2014-05-25T11:23:32.441Z"
         }

@@ -33,7 +33,7 @@ var gpii  = fluid.registerNamespace("gpii");
 fluid.registerNamespace("gpii.ptd.api.lib.params");
 
 // Exclude null and undefined values, but not "falsy" values.  Required to avoid stripping "turn this off" parameter values.
-gpii.ptd.api.lib.params.exists = function(value) {
+gpii.ptd.api.lib.params.exists = function (value) {
     return value !== null && value !== undefined;
 };
 
@@ -92,4 +92,52 @@ gpii.ptd.api.lib.params.getRelevantFields = function (fieldDefinitions, filterKe
         if (value[filterKey]) { relevantFields[key] = value; }
     });
     return relevantFields;
+};
+
+// Common function to look up parameters by keyword, where keyword is one of the tag fields in our fieldDefinition.
+gpii.ptd.api.lib.params.getRelevantParams = function (params, fieldDefinitions, keyword) {
+    var relevantParams = {};
+    var relevantFields = gpii.ptd.api.lib.params.getRelevantFields(fieldDefinitions, keyword);
+    fluid.each(params, function (value, field) {
+        if (relevantFields[field]) {
+            relevantParams[field] = value;
+        }
+    });
+    return relevantParams;
+};
+
+// Generate the configuration format used by the filter functions from a set of params and field definitions.
+gpii.ptd.api.lib.params.getFilterParams = function (params, fieldDefinitions) {
+    var keyword = "filterField";
+    var filterFields = gpii.ptd.api.lib.params.getRelevantFields(fieldDefinitions, keyword);
+    var filterParams = gpii.ptd.api.lib.params.getRelevantParams(params, fieldDefinitions, keyword);
+
+    var includes = {};
+    fluid.each(filterParams, function (value, field) {
+        var fieldDefinition = filterFields[field];
+        if (fieldDefinition) {
+            if (fieldDefinition.comparison || fieldDefinition.type) {
+                var fieldIncludes = {
+                    value: value
+                };
+                if (fieldDefinition.comparison) {
+                    fieldIncludes.comparison = fieldDefinition.comparison;
+                }
+                if (fieldDefinition.type) {
+                    fieldIncludes.type = fieldDefinition.type;
+                }
+                includes[field] = fieldIncludes;
+            }
+            else {
+                includes[field] = value;
+            }
+        }
+    });
+
+    // Only add "includes" if we actually have data
+    if (Object.keys(includes).length > 0) {
+        filterParams.includes = includes;
+    }
+
+    return filterParams;
 };

@@ -45,7 +45,7 @@ gpii.schema.helper.getSchemaHeaders = function (that, key) {
     var schemaUrl = url.resolve(that.options.baseUrl, key + ".json");
 
     return {
-        "Content-Type": "application/" + key + "+json; profile=" + schemaUrl,
+        "Content-Type": "application/" + key + "+json; profile=\"" + schemaUrl + "\"",
         "Link": schemaUrl + "#; rel=\"describedBy\""
     };
 };

@@ -1,0 +1,23 @@
+{
+    "type":        "object",
+    "id":          "record-query",
+    "title":       "Record query schema",
+    "description": "A schema used to validate incoming record browsing query parameters in JSON format.",
+
+    "definitions": {
+        "versions": {
+            "type": "boolean"
+        },
+        "children": {
+            "type": "boolean"
+        }
+    },
+    "properties": {
+        "versions": {
+            "$ref": "record-query#/definitions/versions"
+        },
+        "children": {
+            "$ref": "record-query#/definitions/children"
+        }
+    }
+}

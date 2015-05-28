@@ -2,18 +2,24 @@
 // `gpii.express.router`, eventually this will also be based on that.
 //
 "use strict";
+
+var fluid = fluid || require("infusion");
+var gpii  = fluid.registerNamespace("gpii");
+
+require("./search");
+
+// TODO:  Continue the process of converting all modules to Fluid components.
 module.exports = function (config) {
     var express = require("express");
     var router = express.Router();
 
-    var search = require("./search")(config);
-    router.use("/search", search);
+    var search = gpii.ptd.api.search({
+        couchUrl:  config["couch.url"],
+        baseUrl:   config["base.url"],
+        luceneUrl: config["lucene.url"]
+    });
+    router.use("/search", search.getRouter());
 
-    var suggestConfig = JSON.parse(JSON.stringify(config));
-    suggestConfig.lookup = true;
-
-    var suggest = require("./search")(suggestConfig);
-    router.use("/suggest", suggest);
 
     // Record lookup end points, one for all types, and one each per type
     var records = require("./records")(config);
@@ -54,7 +60,7 @@ module.exports = function (config) {
 
             var markdown = "";
             var fs = require("fs");
-            var BUF_LENGTH = 64*1024;
+            var BUF_LENGTH = 64 * 1024;
             var buffer = new Buffer(BUF_LENGTH);
             var mdFile = fs.openSync(__dirname + "/ctr.md", "r");
             var bytesRead = 1;

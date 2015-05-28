@@ -37,10 +37,9 @@ gpii.ptd.api.lib.sorting.sort = function (array, sortParams) {
 // Process an array of sort parameters.
 gpii.ptd.api.lib.sorting.sortByArray = function (array, sortParams) {
     // We must apply the search in reverse so that the most significant sorting is applied last.
-    var paramKeys = Object.keys(sortParams).reverse();
+    var reverseParams = sortParams.reverse();
 
-    fluid.each(paramKeys, function (paramKey) {
-        var param = sortParams[paramKey];
+    fluid.each(reverseParams, function (param) {
         gpii.ptd.api.lib.sorting.sortByValue(array, param);
     });
 };

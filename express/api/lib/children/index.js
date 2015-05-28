@@ -53,12 +53,21 @@ gpii.ptd.api.lib.children.requestChildren = function (that) {
                 "method":  "GET",
                 "url" :    that.options.couchUrl + that.options.viewPath,
                 "qs":      qs,
-                "json":    true,
-                "timeout": 10000 // In practice, we probably only need a second, but the defaults are definitely too low.
+                "json":    true
+                //,
+                //"timeout": 5000 // In practice, we probably only need a second, but the defaults are definitely too low.
             };
 
             request(childRecordOptions, that.addChildRecords);
         }
+    }
+    // If we have no model data, pass it along and stop processing.
+    else {
+        // We apply a change for those who are listening to our model
+        that.applier.change("processedRecords", that.model.originalRecords);
+
+        // We also fire an event if someone wants to work with that instead.
+        that.events.onChildrenLoaded.fire(that);
     }
 };
 
@@ -66,10 +75,10 @@ gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, bod
     if (error) { fluid.fail(error); }
 
     var parentsWithChildren = [];
+    var childData = {};
 
     // We should not be processing the data at all unless there are "child" records
     if (body.rows && body.rows.length > 0) {
-        var childData = {};
         var allParentIds = that.model.originalRecords.map(gpii.ptd.api.lib.children.extractUniqueIds);
 
         fluid.each(body.rows, function (row) {
@@ -90,20 +99,21 @@ gpii.ptd.api.lib.children.addChildRecords = function (that, error, response, bod
                 childData[parentId][arrayName].push(record);
             }
         });
-
-        fluid.each(that.model.originalRecords, function (originalRecord) {
-            var parentRecord = fluid.copy(originalRecord);
-            parentsWithChildren.push(parentRecord);
-            var childDataForParent = childData[parentRecord.uniqueId];
-            if (childDataForParent) {
-                var keys = Object.keys(childDataForParent);
-                for (var b = 0; b < keys.length; b++) {
-                    var key = keys[b];
-                    parentRecord[key] = childDataForParent[key];
-                }
-            }
-        });
     }
+
+    // We have to do this outside of the normal check in case our search returns only "parents" who do not yet have children
+    fluid.each(that.model.originalRecords, function (originalRecord) {
+        var parentRecord = fluid.copy(originalRecord);
+        parentsWithChildren.push(parentRecord);
+        var childDataForParent = childData[parentRecord.uniqueId];
+        if (childDataForParent) {
+            var keys = Object.keys(childDataForParent);
+            for (var b = 0; b < keys.length; b++) {
+                var key = keys[b];
+                parentRecord[key] = childDataForParent[key];
+            }
+        }
+    });
 
     // We apply a change for those who are listening to our model
     that.applier.change("processedRecords", parentsWithChildren);
@@ -149,11 +159,7 @@ fluid.defaults("gpii.ptd.api.lib.children", {
         // TODO: "This can be simplified once FLUID-5519 is fixed in Infusion" -- Dr. Basman
         originalRecords: [
             {
-                func: "{that}.events.onDataChanged.fire",
-                args:     ["{that}"]
-            },
-            {
-                funcName:      "gpii.ptd.api.lib.children.requestChildren",
+                func:          "{that}.events.onDataChanged.fire",
                 args:          ["{that}"],
                 excludeSource: "init"
             }
