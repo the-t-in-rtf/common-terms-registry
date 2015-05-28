@@ -7,7 +7,7 @@
 
     // TODO:  Create session-scoped variables for query, status, record type, and language, and use if no data is provided.
 
-    search.clearSearchFilter = function(that) {
+    search.clearSearchFilter = function (that) {
         that.applier.change("searchSettings.query", undefined);
     };
 
@@ -15,24 +15,24 @@
         // Wire in support for clearing the search easily
         var clearButton = that.locate("clear");
         if (show) {
-            clearButton.attr("tabIndex",0);
+            clearButton.attr("tabIndex", 0);
             clearButton.show();
         }
         else {
-            clearButton.attr("tabIndex",-1);
+            clearButton.attr("tabIndex", -1);
             clearButton.hide();
         }
     };
 
-    search.updateAddButton = function(that) {
+    search.updateAddButton = function (that) {
         var addButtonContainer = that.locate("add");
-        templates.replaceWith(addButtonContainer,"search-add-record-button");
+        templates.replaceWith(addButtonContainer, "search-add-record-button");
     };
 
     // Change the search offset and trigger a refresh when a page navigation link is clicked
-    search.changePage = function(that, event) {
+    search.changePage = function (that, event) {
         var element = $(event.currentTarget);
-        var offset = element.attr('offset')? parseInt(element.attr('offset')) : undefined;
+        var offset = element.attr("offset") ? parseInt(element.attr("offset"), 10) : undefined;
 
         if (!isNaN(offset) && offset >= 0) {
             // If we click on a link that has the same offset as the current value, no change functions are fired.
@@ -41,27 +41,27 @@
     };
 
     // Update the offset when the "page" input is updated
-    search.updateOffsetFromPage = function(that) {
+    search.updateOffsetFromPage = function (that) {
         that.applier.change("searchSettings.offset", search.calculateCurrentOffset(that));
     };
 
     // Update the page input when the offset is updated elsewhere
-    search.updatePageFromOffset = function(that) {
+    search.updatePageFromOffset = function (that) {
         var pageElement = that.locate("page");
         var currentPage = search.calculateCurrentPage(that);
         pageElement.val(currentPage);
     };
 
     // return a page value based on the current offset
-    search.calculateCurrentPage = function(that) {
+    search.calculateCurrentPage = function (that) {
         var currentPage = 1;
         if (that.model.searchSettings.limit !== -1) {
-            currentPage = Math.floor(that.model.searchSettings.offset/that.model.searchSettings.limit) + 1;
+            currentPage = Math.floor(that.model.searchSettings.offset / that.model.searchSettings.limit) + 1;
         }
         return currentPage;
     };
 
-    search.toggleSortControls = function(that) {
+    search.toggleSortControls = function (that) {
         var sortControls = that.locate("sort");
         if (that.model.count === 0) {
             sortControls.hide();
@@ -72,14 +72,14 @@
     };
 
     // Return an offset based on the current page value
-    search.calculateCurrentOffset = function(that) {
+    search.calculateCurrentOffset = function (that) {
         var offset = that.model.searchSettings.offset;
 
         if (that.model.searchSettings.limit !== -1) {
             var pageElement = that.locate("page");
-            var currentPage = parseInt(pageElement.val());
+            var currentPage = parseInt(pageElement.val(), 10);
             if (currentPage && !isNaN(currentPage) && currentPage >= 1) {
-                offset = (currentPage -1) * that.model.searchSettings.limit;
+                offset = (currentPage - 1) * that.model.searchSettings.limit;
             }
         }
 
@@ -87,7 +87,7 @@
     };
 
     // Update the navigation links in the header when the number of records, pageLimit, or offset are changed
-    search.updatePaginationControls = function(that) {
+    search.updatePaginationControls = function (that) {
 
         var pages       = 1;
         var currentPage = search.calculateCurrentPage(that);
@@ -100,8 +100,10 @@
         }
 
         var pageLinks = that.locate("pageLinks");
+        var navFooter = that.locate("navFooter");
         if (pages < 2) {
             pageLinks.hide();
+            navFooter.hide();
         }
         else {
             var navOptions  = {
@@ -110,21 +112,22 @@
                 totalPages:     pages
             };
 
-            templates.replaceWith(pageLinks,"search-navigation-page-controls", navOptions);
+            templates.replaceWith(navFooter, "search-navigation-footer", navOptions);
+            templates.replaceWith(pageLinks, "search-navigation-page-controls", navOptions);
 
             var navStart = that.locate("navStart");
-            navStart.attr('offset', 0);
+            navStart.attr("offset", 0);
 
             if (currentPage > 1) {
                 var navPrevious = that.locate("navPrevious");
-                navPrevious.attr('offset', (currentPage - 2) * that.model.searchSettings.limit);
+                navPrevious.attr("offset", (currentPage - 2) * that.model.searchSettings.limit);
             }
             if (currentPage < pages) {
                 var navNext = that.locate("navNext");
-                navNext.attr('offset', currentPage * that.model.searchSettings.limit);
+                navNext.attr("offset", currentPage * that.model.searchSettings.limit);
 
                 var navEnd = that.locate("navEnd");
-                navEnd.attr('offset', (pages - 1) * that.model.searchSettings.limit);
+                navEnd.attr("offset", (pages - 1) * that.model.searchSettings.limit);
             }
         }
 
@@ -133,12 +136,12 @@
     };
 
     // We have to reset the offset if someone changes the search terms.  Otherwise we could be on a page that's larger than the result set.
-    search.clearOffset = function(that)  {
+    search.clearOffset = function (that)  {
         that.applier.change("searchSettings.offset", 0);
     };
 
     // Update the results displayed whenever we have new search data
-    search.searchSettingsChanged = function(that) {
+    search.searchSettingsChanged = function (that) {
         var emptyQuery = !Boolean(that.model.searchSettings.query);
         if (that.showClearButton) {
             that.showClearButton(!emptyQuery);
@@ -172,7 +175,7 @@
         // TODO: Break out this AJAX assembly and launch function into its own function
         if (emptyQuery) {
             settings.url += "/terms";
-            settings.data.children=true;
+            settings.data.children = true;
         }
         else {
             settings.url += "/search";
@@ -183,7 +186,7 @@
         $.ajax(settings);
     };
 
-    search.toggleStatusControls = function(that) {
+    search.toggleStatusControls = function (that) {
         var statusSelect  = that.locate("statusSelect");
         var statusToggle  = that.locate("statusToggle");
         var statusOptions = that.locate("statusOptions");
@@ -201,10 +204,10 @@
         }
     };
 
-    search.handleStatusKeys = function(that, event) {
+    search.handleStatusKeys = function (that, event) {
         var statusSelect  = that.locate("statusSelect");
         var statusToggle  = that.locate("statusToggle");
-        switch(event.keyCode) {
+        switch (event.keyCode) {
             case 27: // escape
                 statusSelect.hide();
                 statusToggle.focus();
@@ -212,10 +215,8 @@
         }
     };
 
-    search.handleStatusControlKeys = function(that, event) {
-        var statusSelect  = that.locate("statusSelect");
-        var statusToggle  = that.locate("statusToggle");
-        switch(event.keyCode) {
+    search.handleStatusControlKeys = function (that, event) {
+        switch (event.keyCode) {
             case 13: // enter
                 that.toggleStatusControls();
                 break;
@@ -223,7 +224,7 @@
     };
 
 
-    search.displayError = function(that, jqXHR, textStatus, errorThrown) {
+    search.displayError = function (that, jqXHR, textStatus, errorThrown) {
         var message = errorThrown;
         try {
             var jsonData = JSON.parse(jqXHR.responseText);
@@ -233,14 +234,14 @@
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
         var viewport = that.locate("viewport");
-        templates.prepend(viewport,"common-error", message);
+        templates.prepend(viewport, "common-error", message);
         $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
 
         that.events.markupLoaded.fire();
     };
 
     // Function to update the current "page" of data displayed onscreen.
-    search.displayCurrentPage = function(that) {
+    search.displayCurrentPage = function (that) {
         var viewport = that.locate("viewport");
 
         if (that.model.records && that.model.records.length > 0) {
@@ -253,7 +254,6 @@
             var pageData = that.model.records;
 
             templates.append(viewport, "search-records", {records: pageData, user: that.model.user, pageSize: pageSize });
-            templates.append(viewport, "search-navigation-footer",{});
         }
         else {
             templates.replaceWith(viewport, "search-norecord");
@@ -262,14 +262,14 @@
         that.events.markupLoaded.fire();
     };
 
-    search.processResults = function(that, data) {
+    search.processResults = function (that, data) {
         // TODO:  Come up with a meaningful list of untranslated records
         that.applier.change("records", data.records);
         that.applier.change("count",   data.total_rows);
     };
 
     // Update the "showing records X of Y" blurb.
-    search.updatePageCount = function(that) {
+    search.updatePageCount = function (that) {
         var recordCount = that.locate("recordCount");
         if (that.model.count === 0) {
             recordCount.hide();
@@ -287,21 +287,22 @@
         }
     };
 
-    //// Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
-    //search.refreshOrPageInternally = function(that) {
-    //    var isSearch = Boolean(that.model.searchSettings.query);
-    //    if (isSearch) {
-    //        that.displayCurrentPage();
-    //    }
-    //    else {
-    //        that.searchSettingsChanged();
-    //    }
-    //};
+
+    // Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
+    search.refreshOrPageInternally = function (that) {
+        var isSearch = Boolean(that.model.searchSettings.query);
+        if (isSearch) {
+            that.displayCurrentPage();
+        }
+        else {
+            that.searchSettingsChanged();
+        }
+    };
 
     // We have to do this because templates need to be loaded before we initialize our own code.
-    search.init = function(that) {
+    search.init = function (that) {
         // TODO:  Update this to use the new templates handling and bind our "after" listener to that.
-        templates.loadTemplates(function() {
+        templates.loadTemplates(function () {
             search.searchSettingsChanged(that);
         });
     };
@@ -310,26 +311,27 @@
         gradeNames: ["fluid.viewRelayComponent", "autoInit"],
         baseUrl: "/api",
         selectors: {
-            "query":         ".ptd-search-query",
-            "sort":          ".ptd-search-sort",
             "add":           ".ptd-add-record-button",
-            "status":        ".ptd-search-status",
-            "clear":         ".ptd-clear-button",
             "aliasToggle":   ".alias-toggle",
+            "clear":         ".ptd-clear-button",
+            "header":        ".ptd-header",
+            "navBar":        ".ptd-nav-bar",
+            "navEnd":        ".ptd-search-nav-end",
+            "navNext":       ".ptd-search-nav-next",
+            "navPrevious":   ".ptd-search-nav-previous",
+            "navStart":      ".ptd-search-nav-start",
+            "navFooter":     ".ptd-search-nav-footer",
+            "navPageLink":   ".ptd-search-nav-page-link",
+            "page":          ".ptd-search-nav-current-page",
+            "pageLinks":     ".ptd-search-page-links",
+            "query":         ".ptd-search-query",
+            "recordCount":   ".ptd-record-count",
+            "sort":          ".ptd-search-sort",
+            "status":        ".ptd-search-status",
             "statusOptions": ".ptd-search-status",
             "statusToggle":  ".ptd-search-status-toggle",
             "statusText":    ".ptd-search-status-current-text",
             "statusSelect":  ".ptd-search-status-selector",
-            "navStart":      ".ptd-search-nav-start",
-            "page":          ".ptd-search-nav-current-page",
-            "navPrevious":   ".ptd-search-nav-previous",
-            "pageLinks":     ".ptd-search-page-links",
-            "navNext":       ".ptd-search-nav-next",
-            "navEnd":        ".ptd-search-nav-end",
-            "navPageLink":   ".ptd-search-nav-page-link",
-            "navBar":        ".ptd-nav-bar",
-            "header":        ".ptd-header",
-            "recordCount":   ".ptd-record-count",
             "viewport":      ".ptd-viewport"
         },
         bindings: [
@@ -358,7 +360,7 @@
                             offset:   0,
                             limit:    25,
                             sort:     "uniqueId",
-                            statuses: ["active","unreviewed","candidate","draft"],
+                            statuses: ["active", "unreviewed", "candidate", "draft"],
                             query:    ""
                         },
                         data: null
@@ -373,16 +375,14 @@
                         data: "{ctr.components.search}.data"
                     },
                     listeners: {
-                        afterLogout:
-                            [
-                                {
-                                    func: "{ctr.components.search}.events.refresh.fire"
-                                },
-                                {
-                                    func: "{ctr.components.search}.updateAddButton"
-
-                                }
-                            ]
+                        afterLogout: [
+                            {
+                                func: "{ctr.components.search}.events.refresh.fire"
+                            },
+                            {
+                                func: "{ctr.components.search}.updateAddButton"
+                            }
+                        ]
                     }
                 }
             }
@@ -597,16 +597,16 @@
                 }
             ],
             markupLoaded: [
-                {
-                    "this": "{that}.dom.navPageLink",
-                    method: "click",
-                    args:   "{that}.changePage"
-                },
-                {
-                    "this": "{that}.dom.navPageLink",
-                    method: "keydown",
-                    args:   "{that}.changePage"
-                },
+                //{
+                //    "this": "{that}.dom.navPageLink",
+                //    method: "click",
+                //    args:   "{that}.changePage"
+                //},
+                //{
+                //    "this": "{that}.dom.navPageLink",
+                //    method: "keydown",
+                //    args:   "{that}.changePage"
+                //},
                 {
                     "this": "{that}.dom.clear",
                     method: "click",
