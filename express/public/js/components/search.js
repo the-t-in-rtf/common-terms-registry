@@ -223,7 +223,6 @@
         }
     };
 
-
     search.displayError = function (that, jqXHR, textStatus, errorThrown) {
         var message = errorThrown;
         try {
@@ -233,9 +232,12 @@
         catch (e) {
             console.log("jQuery.ajax call returned meaningless jqXHR.responseText payload. Using 'errorThrown' instead.");
         }
+
+        that.applier.change("count",   0);
+        that.applier.change("records", []);
+
         var viewport = that.locate("viewport");
-        templates.prepend(viewport, "common-error", message);
-        $(viewport).find(".alert-box:first").get(0).scrollIntoView(false);
+        templates.replaceWith(viewport, "search-error", message);
 
         that.events.markupLoaded.fire();
     };
@@ -286,7 +288,6 @@
             templates.replaceWith(recordCount, "search-record-count", options);
         }
     };
-
 
     // Searches are unlimited, browsing is not.  We need something that decides whether to refresh or page internally based on the page size
     search.refreshOrPageInternally = function (that) {
@@ -597,16 +598,6 @@
                 }
             ],
             markupLoaded: [
-                //{
-                //    "this": "{that}.dom.navPageLink",
-                //    method: "click",
-                //    args:   "{that}.changePage"
-                //},
-                //{
-                //    "this": "{that}.dom.navPageLink",
-                //    method: "keydown",
-                //    args:   "{that}.changePage"
-                //},
                 {
                     "this": "{that}.dom.clear",
                     method: "click",
