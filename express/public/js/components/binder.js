@@ -52,8 +52,8 @@
     "use strict";
     var binder = fluid.registerNamespace("ctr.components.binder");
 
-    binder.setRadioValue = function(element,change) {
-        element.each(function(index, option) {
+    binder.setRadioValue = function (element, change) {
+        element.each(function (index, option) {
             option.checked = ($(option).val() === change);
         });
     };
@@ -67,7 +67,7 @@
 
             // initial sync, model overwrites values
             if (binding.elementType === "radio") {
-                binder.setRadioValue(element,value);
+                binder.setRadioValue(element, value);
             }
             else {
                 element.val(value);
@@ -79,10 +79,10 @@
 
                 var value = element.val();
                 if (binding.elementType === "radio") {
-                    element.each(function(index, option) {
-                      if (option.checked) {
-                          value = $(option).val();
-                      }
+                    element.each(function (index, option) {
+                        if (option.checked) {
+                            value = $(option).val();
+                        }
                     });
                 }
                 that.applier.change(binding.path, value);
@@ -93,7 +93,7 @@
                 console.log("Changing value based on model update.");
 
                 if (binding.elementType === "radio") {
-                    binder.setRadioValue(element,change);
+                    binder.setRadioValue(element, change);
                 }
                 else {
                     element.val(change);
