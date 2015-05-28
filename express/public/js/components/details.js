@@ -56,7 +56,7 @@
 
             var usesContainer = that.locate("usesContainer");
             templates.replaceWith(usesContainer, "details-fields-uses", that.data.model);
-            that.events.markupLoaded.fire();
+            that.events.usesLoaded.fire();
         }
     };
 
@@ -74,7 +74,7 @@
 
             var usesContainer = that.locate("usesContainer");
             templates.replaceWith(usesContainer, "details-fields-uses", that.data.model);
-            that.events.markupLoaded.fire();
+            that.events.usesLoaded.fire();
         }
         else {
             console.log("Couldn't determine list position of use, and as a result couldn't remove it.");
@@ -151,6 +151,7 @@
         var viewport = that.locate("viewport");
         templates.replaceWith(viewport, details.getTemplate(that.data.model.record.type), that.data.model);
         that.events.markupLoaded.fire();
+        that.events.usesLoaded.fire();
     };
 
     details.loadLinkTemplate = function (that) {
@@ -162,7 +163,7 @@
         var container = that.locate("parentLink");
         var template  = that.data.model.record.type === "translation" ? "details-fields-translationof" : "details-fields-aliasof";
         templates.replaceWith(container, template, that.data.model);
-        that.events.markupLoaded.fire();
+        that.events.linkLoaded.fire();
     };
 
     details.displayRecord = function (that, data) {
@@ -296,6 +297,8 @@
         },
         events: {
             "refresh":      "preventable",
+            "usesLoaded":   "preventable",
+            "linkLoaded":   "preventable",
             "markupLoaded": "preventable",
             "typeChanged":  "preventable",
             "linkChanged":  "preventable"
@@ -335,31 +338,43 @@
             }
         },
         listeners: {
-            markupLoaded: [
+            linkLoaded: [
+                {
+                    "funcName": "ctr.components.binder.applyBinding",
+                    "args":     "{that}"
+                }
+            ],
+            usesLoaded: [
                 {
                     "this": "{that}.dom.addUse",
-                    method: "change",
-                    args:   "{that}.addUse"
+                    method: "on",
+                    args:   ["change", "{that}.addUse"]
                 },
                 {
                     "this": "{that}.dom.removeUse",
-                    method: "click",
-                    args:   "{that}.removeUse"
+                    method: "on",
+                    args:   ["click.removeUse", "{that}.removeUse"]
                 },
                 {
                     "this": "{that}.dom.removeUse",
-                    method: "keypress",
-                    args:   "{that}.removeUse"
+                    method: "on",
+                    args:   ["keypress.removeUse", "{that}.removeUse"]
+                },
+                {
+                    "funcName": "ctr.components.binder.applyBinding",
+                    "args":     "{that}"
+                }
+            ],
+            markupLoaded: [
+                {
+                    "this": "{that}.dom.save",
+                    method: "on",
+                    args:   ["click.save", "{that}.save"]
                 },
                 {
                     "this": "{that}.dom.save",
-                    method: "click",
-                    args:   "{that}.save"
-                },
-                {
-                    "this": "{that}.dom.save",
-                    method: "keypress",
-                    args:   "{that}.save"
+                    method: "on",
+                    args:   ["keypress.save", "{that}.save"]
                 },
                 {
                     "funcName": "ctr.components.binder.applyBinding",
