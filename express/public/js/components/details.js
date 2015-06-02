@@ -270,7 +270,7 @@
             },
             {
                 selector:    "notes",
-                path:        "notes",
+                path:        "record.notes",
                 elementType: "text"
             }
         ],
@@ -291,7 +291,7 @@
             "termLabel":     "input[name='termLabel']",
             "valueSpace":    "input[name='valueSpace']",
             "defaultValue":  "input[name='defaultValue']",
-            "notes":         "input[name='notes']"
+            "notes":         "[name='notes']"
         },
         events: {
             "refresh":      "preventable",
