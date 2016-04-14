@@ -4,7 +4,7 @@
     "couch.base.url" : "http://admin:admin@localhost:5984/",
     "couch.url" :      "http://admin:admin@localhost:5984/tr/",
     "users":           "http://admin:admin@localhost:5984/_users",
-    "lucene.url" :     "http://localhost:5985/local/tr/_design/lucene/by_content?q=braille",
+    "lucene.url" :     "http://localhost:5985/local/tr/_design/lucene/by_content",
     "record.defaults": {
         "type":   "term",
         "status": "draft"
