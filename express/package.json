@@ -13,7 +13,7 @@
     "express":              "4.8.0",
     "express-handlebars":   "^1.0.1",
     "express-session":      "~1.0.0",
-    "express-user-couchdb": "0.3.4",
+    "express-user-couchdb": "0.3.6",
     "infusion":             "git://github.com/fluid-project/infusion.git#605b0bcfaedf6193c31456236d3aa4e42cf36a96",
     "marked":               "^0.3.2",
     "method-override":      "~1.0.0",
